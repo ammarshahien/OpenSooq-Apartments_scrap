@@ -1,0 +1,9 @@
+Disclaimer
+Ethical Use:
+Make sure you comply with the website's terms of service and robots.txt rules when scraping data.
+
+Rate Limiting:
+If you plan to scrape many pages or run the script frequently, consider adding delays or using proxy services to avoid overloading the server.
+
+License
+This project is provided for educational purposes. Feel free to modify the code to suit your needs.
