@@ -1,0 +1,18 @@
+Code Structure
+get_html(url):
+Retrieves and parses the search results page, returning a list of full URLs for apartment listings.
+
+Apartments_data(url):
+Fetches and parses an individual apartment listing page.
+
+Extracts dynamic fields from <li> tags.
+Extracts multi-line fields (Interior Options, Exterior Options, Technology Options).
+Extracts the price.
+Returns a dictionary containing all the details, including the listing URL.
+main():
+Coordinates the scraping process:
+
+Iterates through the search results pages.
+Collects the data from individual listings.
+Combines new data with existing CSV data (if available).
+Saves the final dataset to Apartments_data.csv.
