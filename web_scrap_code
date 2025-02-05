@@ -1,0 +1,70 @@
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+
+def get_html(url):
+    baseurl = "https://jo.opensooq.com"
+    r = requests.get(url)
+    sp = BeautifulSoup(r.text, 'lxml')
+    links = sp.select('div#serpMainContent a')
+    return [baseurl + link.attrs['href'] for link in links]
+
+def Apartments_data(url):
+    r = requests.get(url)
+    sp = BeautifulSoup(r.text, 'lxml')
+
+    Apartments = {"URL": url}  
+
+    
+    for li in sp.select('li'):
+        p_tag = li.select_one('p')  
+        a_tag = li.select_one('a') 
+
+        if p_tag and a_tag: 
+            field_name = p_tag.text.strip()
+            field_value = a_tag.text.strip()
+            Apartments[field_name] = field_value
+
+  
+    for li in sp.select('li.width-100'):
+        p_tag = li.select_one('p') 
+        value_tag = li.select_one('p.width-75')
+
+        if p_tag and value_tag:
+            field_name = p_tag.text.strip()
+            field_value = value_tag.text.strip()
+            Apartments[field_name] = field_value
+
+  
+    price_tag = sp.select_one('#postViewCardDesktop > div')
+    Apartments['Price'] = price_tag.text.strip() if price_tag else None
+
+    return Apartments
+
+def main():
+    all_Apartments_data = [] 
+
+    for x in range(1, 20): 
+        urls = get_html(f'https://jo.opensooq.com/en/real-estate-for-sale/apartments-for-sale?search=true&page={x}')
+        for url in urls:
+            car_info = Apartments_data(url)
+            all_Apartments_data.append(car_info) 
+        print(f"Page {x} Completed.")
+
+    
+    new_df = pd.DataFrame(all_Apartments_data)
+
+    
+    try:
+        existing_df = pd.read_csv("Apartments_data.csv")  
+        df = pd.concat([existing_df, new_df], ignore_index=True)  
+    except FileNotFoundError:
+        df = new_df  
+
+    
+    df.to_csv("Apartments_data.csv", index=False, encoding='utf-8-sig')
+
+    print(f"✅ Data appended to Apartments_data.csv. New shape: {df.shape}")
+
+if __name__ == "__main__":
+    main()
